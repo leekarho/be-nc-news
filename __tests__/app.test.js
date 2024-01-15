@@ -64,7 +64,6 @@ describe("GET /api/articles/:article_id", () => {
       .expect(200)
       .then((response) => {
         const article = response.body.article;
-        const date = new Date(1594329060000);
 
         expect(article.article_id).toBe(1);
         expect(article.title).toBe("Living in the shadow of a great man");
