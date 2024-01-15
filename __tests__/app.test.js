@@ -33,3 +33,29 @@ describe("GET /api/topics", () => {
       });
   });
 });
+
+describe("GET /api", () => {
+  test("returns an object", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((response) => {
+        expect(typeof response.body).toBe("object");
+      });
+  });
+  test("endPoints has correct keys", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((response) => {
+        const endPoints = response.body;
+        delete endPoints["GET /api"];
+
+        for (keys in endPoints) {
+          expect(endPoints[keys].hasOwnProperty("description")).toBe(true);
+          expect(endPoints[keys].hasOwnProperty("queries")).toBe(true);
+          expect(endPoints[keys].hasOwnProperty("exampleResponse")).toBe(true);
+        }
+      });
+  });
+});
