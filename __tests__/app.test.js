@@ -10,21 +10,14 @@ afterAll(() => {
 });
 
 describe("GET /api/topics", () => {
-  test("GET:200 returns an array", () => {
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then((response) => {
-        expect(Array.isArray(response.body)).toBe(true);
-      });
-  });
   test("GET:200 returns topics with correct properties", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
       .then((response) => {
-        const topics = response.body;
+        const topics = response.body.topics;
 
+        expect(Array.isArray(topics)).toBe(true);
         expect(topics.length).toBeGreaterThan(0);
         topics.forEach((topic) => {
           expect(typeof topic.description).toBe("string");
