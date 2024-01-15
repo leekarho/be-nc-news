@@ -23,7 +23,6 @@ exports.selectAllArticles = () => {
    `
     )
     .then((data) => {
-      console.log(data.rows, "<--data.rows");
       return data.rows;
     });
 };
