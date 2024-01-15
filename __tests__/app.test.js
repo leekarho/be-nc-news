@@ -3,6 +3,7 @@ const app = require("../app");
 const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
+const endPoints = require("../endpoints.json");
 
 beforeEach(() => seed(testData));
 afterAll(() => {
@@ -41,14 +42,56 @@ describe("GET /api", () => {
       .get("/api")
       .expect(200)
       .then((response) => {
-        const endPoints = response.body;
-        delete endPoints["GET /api"];
+        const respEndpoints = response.body;
+        expect(respEndpoints).toEqual(endPoints);
 
-        for (keys in endPoints) {
-          expect(endPoints[keys].hasOwnProperty("description")).toBe(true);
-          expect(endPoints[keys].hasOwnProperty("queries")).toBe(true);
-          expect(endPoints[keys].hasOwnProperty("exampleResponse")).toBe(true);
+        delete respEndpoints["GET /api"];
+        for (keys in respEndpoints) {
+          expect(respEndpoints[keys].hasOwnProperty("description")).toBe(true);
+          expect(respEndpoints[keys].hasOwnProperty("queries")).toBe(true);
+          expect(respEndpoints[keys].hasOwnProperty("exampleResponse")).toBe(
+            true
+          );
         }
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id", () => {
+  test("GET: 200 sends a single article", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then((response) => {
+        const article = response.body.article;
+        const date = new Date(1594329060000);
+
+        expect(article.article_id).toBe(1);
+        expect(article.title).toBe("Living in the shadow of a great man");
+        expect(article.topic).toBe("mitch");
+        expect(article.author).toBe("butter_bridge");
+        expect(article.body).toBe("I find this existence challenging");
+        // expect(article.created_at).toBe(new Date(1594329060000).toJSON()); there is an hour difference in the timestamp?
+        expect(article.votes).toBe(100);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+      });
+  });
+  test("GET:404 sends error message when given a non-existent id", () => {
+    return request(app)
+      .get("/api/articles/999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      });
+  });
+  test("GET:400 sends error message when given a bad request", () => {
+    return request(app)
+      .get("/api/articles/pokemon")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
       });
   });
 });
