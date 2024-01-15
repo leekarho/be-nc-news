@@ -4,6 +4,7 @@ const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
 const endPoints = require("../endpoints.json");
+require("jest-sorted");
 
 beforeEach(() => seed(testData));
 afterAll(() => {
@@ -17,7 +18,6 @@ describe("GET /api/topics", () => {
       .expect(200)
       .then((response) => {
         const topics = response.body.topics;
-
         expect(Array.isArray(topics)).toBe(true);
         expect(topics.length).toBeGreaterThan(0);
         topics.forEach((topic) => {
@@ -96,13 +96,13 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles", () => {
-  test("return an array of article objects", () => {
+  test.only("return an array of article objects", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then((response) => {
         const articles = response.body.article;
-        expect(articles.length).toBeGreaterThan(0);
+        expect(articles.length).toBe(13);
 
         articles.forEach((article) => {
           expect(typeof article.article_id).toBe("number");
@@ -116,4 +116,20 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("should be sorted by article.created_at", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.article;
+        console.log(articles, "article");
+        expect(articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("GET:200 get all comments from article_id", () => {});
 });

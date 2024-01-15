@@ -7,8 +7,6 @@ const {
 } = require("./controllers/articles.controller");
 const app = express();
 
-app.use(express.json());
-
 app.get("/api", getAllEndpoints);
 
 app.get("/api/topics", getAllTopics);
