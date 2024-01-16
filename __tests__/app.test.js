@@ -222,7 +222,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
-  test("POST 400: trying to post a comment with a non-existent username", () => {
+  test("POST 404: trying to post a comment with a non-existent username", () => {
     const newComment = {
       username: "nc_student",
       body: "i bloody love coding",
@@ -230,9 +230,9 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/3/comments")
       .send(newComment)
-      .expect(400)
+      .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("Bad request");
+        expect(response.body.msg).toBe("Not found");
       });
   });
   test("POST 400: sends error when given a bad request", () => {
@@ -304,6 +304,16 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("Not found");
+      });
+  });
+  test("PATCH 400 sends error message when given a non-existent id", () => {
+    const updatedVote = { inc_votes: "sandwich" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedVote)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
       });
   });
 });
