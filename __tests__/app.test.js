@@ -318,7 +318,7 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
-describe.only("DELETE /api/comments/:comment_id", () => {
+describe("DELETE /api/comments/:comment_id", () => {
   test("DELETE 204 can delete a comment", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
