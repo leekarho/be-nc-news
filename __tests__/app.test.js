@@ -4,6 +4,7 @@ const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
 const endPoints = require("../endpoints.json");
+require("jest-sorted");
 
 beforeEach(() => seed(testData));
 afterAll(() => {
@@ -17,7 +18,6 @@ describe("GET /api/topics", () => {
       .expect(200)
       .then((response) => {
         const topics = response.body.topics;
-
         expect(Array.isArray(topics)).toBe(true);
         expect(topics.length).toBeGreaterThan(0);
         topics.forEach((topic) => {
@@ -60,18 +60,17 @@ describe("GET /api", () => {
 describe("GET /api/articles/:article_id", () => {
   test("GET: 200 sends a single article", () => {
     return request(app)
-      .get("/api/articles/1")
+      .get("/api/articles/3")
       .expect(200)
       .then((response) => {
         const article = response.body.article;
 
-        expect(article.article_id).toBe(1);
-        expect(article.title).toBe("Living in the shadow of a great man");
+        expect(article.article_id).toBe(3);
+        expect(article.title).toBe("Eight pug gifs that remind me of mitch");
         expect(article.topic).toBe("mitch");
-        expect(article.author).toBe("butter_bridge");
-        expect(article.body).toBe("I find this existence challenging");
-        // expect(article.created_at).toBe(new Date(1594329060000).toJSON()); there is an hour difference in the timestamp?
-        expect(article.votes).toBe(100);
+        expect(article.author).toBe("icellusedkars");
+        expect(article.body).toBe("some gifs");
+        expect(article.created_at).toBe(new Date(1604394720000).toJSON());
         expect(article.article_img_url).toBe(
           "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         );
@@ -102,7 +101,7 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then((response) => {
         const articles = response.body.article;
-        expect(articles.length).toBeGreaterThan(0);
+        expect(articles.length).toBe(13);
 
         articles.forEach((article) => {
           expect(typeof article.article_id).toBe("number");
@@ -114,6 +113,71 @@ describe("GET /api/articles", () => {
           expect(typeof article.article_img_url).toBe("string");
           expect(typeof article.comment_count).toBe("string");
         });
+      });
+  });
+  test("should be sorted by article.created_at", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.article;
+        expect(articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+});
+
+describe.only("GET /api/articles/:article_id/comments", () => {
+  test("GET:200 get all comments from article_id", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body.comments;
+        expect(comments.length).toBe(2);
+        comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.article_id).toBe("number");
+        });
+      });
+  });
+  test("GET:400 sends error message when given a bad request", () => {
+    return request(app)
+      .get("/api/articles/pokemon/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("GET:404 sends error message when given a non-existent id", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      });
+  });
+  test("GET:200 responds with empty array if article has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body.comments;
+        expect(comments).toEqual([]);
+      });
+  });
+  test("GET:200 array of comments is in descending order", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body.comments;
+        expect(comments).toBeSortedBy("created_at", { descending: true });
       });
   });
 });
