@@ -27,3 +27,25 @@ exports.selectAllArticles = () => {
       return data.rows;
     });
 };
+
+exports.updateArticleById = (article_id, inc_votes) => {
+  return db
+    .query("SELECT votes FROM articles WHERE article_id = $1", [article_id])
+    .then((data) => {
+      if (data.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
+      const newVotes = data.rows[0].votes + inc_votes;
+      return db.query(
+        `UPDATE articles
+      SET votes = $1
+      WHERE article_id = $2
+      RETURNING *`,
+        [newVotes, article_id]
+      );
+    })
+    .then((data) => {
+      console.log(data.rows[0]);
+      return data.rows[0];
+    });
+};

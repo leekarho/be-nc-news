@@ -213,3 +213,47 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("PATCH 200 can update an article", () => {
+    const updatedVote = { inc_votes: 3 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedVote)
+      .expect(200)
+      .then((response) => {
+        const article = response.body.article;
+        expect(article.title).toBe("Living in the shadow of a great man");
+        expect(article.topic).toBe("mitch");
+        expect(article.body).toBe("I find this existence challenging");
+        expect(article.votes).toBe(103);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+      });
+  });
+  test.only("PATCH 200 trying to patch article with more than just votes", () => {
+    const updatedVote = { inc_votes: 3, topic: "sandwich" };
+    return request(app).patch("/api/articles/1").send(updatedVote).expect(200);
+  });
+  test("PATCH 400 trying to update vote with no inc_vote key", () => {
+    const updatedVote = { topic: "pie" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedVote)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 404 sends error message when given a non-existent id", () => {
+    const updatedVote = { inc_votes: 3 };
+    return request(app)
+      .patch("/api/articles/999")
+      .send(updatedVote)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      });
+  });
+});
