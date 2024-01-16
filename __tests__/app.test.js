@@ -181,3 +181,35 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("can add a comment to an article", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "i bloody love coding",
+    };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        const comment = response.body.comment;
+        expect(comment.comment_id).toBe(19);
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.body).toBe("i bloody love coding");
+      });
+  });
+  test("POST 400: sends error message when given a non-existent id", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "i bloody love coding",
+    };
+    return request(app)
+      .post("/api/articles/999/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
