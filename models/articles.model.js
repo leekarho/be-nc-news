@@ -45,7 +45,6 @@ exports.updateArticleById = (article_id, inc_votes) => {
       );
     })
     .then((data) => {
-      console.log(data.rows[0]);
       return data.rows[0];
     });
 };

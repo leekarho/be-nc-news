@@ -232,7 +232,7 @@ describe("PATCH /api/articles/:article_id", () => {
         );
       });
   });
-  test.only("PATCH 200 trying to patch article with more than just votes", () => {
+  test("PATCH 200 trying to patch article with more than just votes", () => {
     const updatedVote = { inc_votes: 3, topic: "sandwich" };
     return request(app).patch("/api/articles/1").send(updatedVote).expect(200);
   });
