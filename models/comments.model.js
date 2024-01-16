@@ -31,7 +31,6 @@ exports.removeCommentByCommentId = (comment_id) => {
       if (data.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Not found" });
       }
-      console.log(data.rows);
       return data.rows;
     });
 };
