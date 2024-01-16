@@ -24,7 +24,6 @@ exports.selectAllArticles = () => {
    `
     )
     .then((data) => {
-      console.log(data.rows);
       return data.rows;
     });
 };
