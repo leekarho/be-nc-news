@@ -9,6 +9,7 @@ const {
 const {
   getCommentsByArticleId,
   postCommentOnArticleId,
+  deleteCommentByCommentId,
 } = require("./controllers/comments.controller");
 const app = express();
 
@@ -27,6 +28,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postCommentOnArticleId);
+
+app.delete("/api/comments/:comment_id", deleteCommentByCommentId);
 
 app.use((err, req, res, next) => {
   if (err.msg === "Not found") {
