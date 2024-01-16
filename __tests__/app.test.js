@@ -183,7 +183,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 describe("POST /api/articles/:article_id/comments", () => {
-  test("can add a comment to an article", () => {
+  test("POST 201 can add a comment to an article", () => {
     const newComment = {
       username: "butter_bridge",
       body: "i bloody love coding",
@@ -199,7 +199,57 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(comment.body).toBe("i bloody love coding");
       });
   });
-  test("POST 400: sends error message when given a non-existent id", () => {
+  test("POST 201: trying to post a comment with more key-value pairs than expected", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "i bloody love coding",
+      votes: 5,
+    };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(201);
+  });
+  test("POST 400: trying to post a comment with fewer key-value pairs than expected", () => {
+    const newComment = {
+      body: "i bloody love coding",
+    };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: trying to post a comment with a non-existent username", () => {
+    const newComment = {
+      username: "nc_student",
+      body: "i bloody love coding",
+    };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: sends error when given a bad request", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "i bloody love coding",
+      votes: 5,
+    };
+    return request(app)
+      .post("/api/articles/sandwich/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("POST 404: sends error message when given a non-existent id", () => {
     const newComment = {
       username: "butter_bridge",
       body: "i bloody love coding",
@@ -207,9 +257,9 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/999/comments")
       .send(newComment)
-      .expect(400)
+      .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("Bad request");
+        expect(response.body.msg).toBe("Not found");
       });
   });
 });

@@ -23,8 +23,13 @@ exports.getCommentsByArticleId = (req, res, next) => {
 exports.postCommentOnArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
-  insertCommentOnArticleId(article_id, body, username)
-    .then((comment) => {
+
+  const articleCheck = checkArticleExists(article_id);
+  const selectQuery = insertCommentOnArticleId(article_id, body, username);
+
+  Promise.all([selectQuery, articleCheck])
+    .then((response) => {
+      const comment = response[0];
       res.status(201).send({ comment });
     })
     .catch((err) => {
