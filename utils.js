@@ -19,3 +19,20 @@ exports.checkUsernameExists = (username) => {
       }
     });
 };
+
+exports.checkTopicExists = (topic) => {
+  let queryStr = "SELECT * FROM topics";
+
+  const queryArr = [];
+
+  if (topic) {
+    queryStr += " WHERE slug = $1";
+    queryArr.push(topic);
+  }
+
+  return db.query(queryStr, queryArr).then((data) => {
+    if (data.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Not found" });
+    }
+  });
+};

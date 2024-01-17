@@ -377,8 +377,8 @@ describe("GET /api/articles (topic query)", () => {
       .expect(200)
       .then((response) => {
         const articles = response.body.articles;
-        expect(Array.isArray(articles)).toBe(true);
         expect(articles.length).toBeGreaterThan(0);
+
         articles.forEach((article) => {
           expect(typeof article.article_id).toBe("number");
           expect(typeof article.author).toBe("string");
@@ -405,7 +405,7 @@ describe("GET /api/articles (topic query)", () => {
       .expect(200)
       .then((response) => {
         const articles = response.body.articles;
-        expect(Array.isArray(articles)).toBe(true);
+
         expect(articles.length).toBeGreaterThan(0);
         articles.forEach((article) => {
           expect(typeof article.article_id).toBe("number");
@@ -417,6 +417,15 @@ describe("GET /api/articles (topic query)", () => {
           expect(typeof article.article_img_url).toBe("string");
           expect(typeof article.comment_count).toBe("string");
         });
+      });
+  });
+  test("GET 200 returns empty array if valid topic has no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toEqual([]);
       });
   });
 });

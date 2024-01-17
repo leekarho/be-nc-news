@@ -3,6 +3,7 @@ const {
   selectAllArticles,
   updateArticleById,
 } = require("../models/articles.model");
+const { checkTopicExists } = require("../utils");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -17,8 +18,13 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getAllArticles = (req, res, next) => {
   const { topic } = req.query;
-  selectAllArticles(topic)
-    .then((articles) => {
+
+  const topicCheck = checkTopicExists(topic);
+  const selectQuery = selectAllArticles(topic);
+
+  Promise.all([selectQuery, topicCheck])
+    .then((response) => {
+      const articles = response[0];
       res.status(200).send({ articles });
     })
     .catch((err) => {
