@@ -420,3 +420,25 @@ describe("GET /api/articles (topic query)", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id (comment_count)", () => {
+  test("GET 200 article object should include comments count", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then((response) => {
+        const article = response.body.article;
+
+        expect(article.article_id).toBe(3);
+        expect(article.title).toBe("Eight pug gifs that remind me of mitch");
+        expect(article.topic).toBe("mitch");
+        expect(article.author).toBe("icellusedkars");
+        expect(article.body).toBe("some gifs");
+        expect(article.created_at).toBe(new Date(1604394720000).toJSON());
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+        expect(article.comment_count).toBe(2);
+      });
+  });
+});
