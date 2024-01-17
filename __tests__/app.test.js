@@ -99,7 +99,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        const articles = response.body.article;
+        const articles = response.body.articles;
         expect(articles.length).toBe(13);
 
         articles.forEach((article) => {
@@ -119,7 +119,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        const articles = response.body.article;
+        const articles = response.body.articles;
         expect(articles).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -365,6 +365,57 @@ describe("GET /api/users", () => {
           expect(typeof user.username).toBe("string");
           expect(typeof user.name).toBe("string");
           expect(typeof user.avatar_url).toBe("string");
+        });
+      });
+  });
+});
+
+describe("GET /api/articles (topic query)", () => {
+  test("GET 200 can filter articles by topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles.length).toBeGreaterThan(0);
+        articles.forEach((article) => {
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        });
+      });
+  });
+  test("GET 404 if non existant topic entered", () => {
+    return request(app)
+      .get("/api/articles?topic=sandwich")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      });
+  });
+  test("GET 200 returns all topics if query is empty", () => {
+    return request(app)
+      .get("/api/articles?topic=")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles.length).toBeGreaterThan(0);
+        articles.forEach((article) => {
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
         });
       });
   });
