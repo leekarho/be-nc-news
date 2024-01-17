@@ -36,9 +36,9 @@ exports.selectAllArticles = (topic) => {
   ORDER BY articles.created_at DESC`;
 
   return db.query(queryStr, queryArr).then((data) => {
-    if (data.rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "Not found" });
-    }
+    // if (data.rows.length === 0) {
+    //   return Promise.reject({ status: 404, msg: "Not found" });
+    // }
     return data.rows;
   });
 };
