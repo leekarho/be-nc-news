@@ -3,7 +3,7 @@ const {
   insertCommentOnArticleId,
   removeCommentByCommentId,
 } = require("../models/comments.model");
-const { checkArticleExists } = require("../utils");
+const { checkArticleExists, checkUsernameExists } = require("../utils");
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
@@ -26,9 +26,10 @@ exports.postCommentOnArticleId = (req, res, next) => {
   const { username, body } = req.body;
 
   const articleCheck = checkArticleExists(article_id);
+  const usernameCheck = checkUsernameExists(username);
   const selectQuery = insertCommentOnArticleId(article_id, body, username);
 
-  Promise.all([selectQuery, articleCheck])
+  Promise.all([selectQuery, articleCheck, usernameCheck])
     .then((response) => {
       const comment = response[0];
       res.status(201).send({ comment });
