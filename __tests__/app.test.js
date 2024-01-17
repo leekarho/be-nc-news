@@ -4,7 +4,6 @@ const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
 const endPoints = require("../endpoints.json");
-require("jest-sorted");
 
 beforeEach(() => seed(testData));
 afterAll(() => {
@@ -115,7 +114,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("should be sorted by article.created_at", () => {
+  test("GET: 200 should be sorted by article.created_at", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -217,9 +216,9 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/3/comments")
       .send(newComment)
-      .expect(400)
+      .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("Bad request");
+        expect(response.body.msg).toBe("Not found");
       });
   });
   test("POST 404: trying to post a comment with a non-existent username", () => {
@@ -322,7 +321,7 @@ describe("DELETE /api/comments/:comment_id", () => {
   test("DELETE 204 can delete a comment", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
-  test("DELETE 404 cannot delete and previously deleted comment", () => {
+  test("DELETE 404 cannot delete a previously deleted comment", () => {
     return request(app)
       .delete("/api/comments/1")
       .expect(204)

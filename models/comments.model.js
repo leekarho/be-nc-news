@@ -11,14 +11,21 @@ exports.selectCommentsByArticleId = (id) => {
     });
 };
 
-exports.insertCommentOnArticleId = (article_id, username, body) => {
+exports.insertCommentOnArticleId = (article_id, body, username) => {
   return db
-    .query(
-      "INSERT INTO comments (article_id, body, author) VALUES ($1, $2, $3) RETURNING *",
-      [article_id, username, body]
-    )
+    .query(`SELECT * FROM users WHERE username = $1`, [username])
     .then((data) => {
-      return data.rows[0];
+      if (data.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
+      return db
+        .query(
+          "INSERT INTO comments (article_id, body, author) VALUES ($1, $2, $3) RETURNING *",
+          [article_id, body, username]
+        )
+        .then((data) => {
+          return data.rows[0];
+        });
     });
 };
 
