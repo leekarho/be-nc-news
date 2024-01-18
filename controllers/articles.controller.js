@@ -2,6 +2,7 @@ const {
   selectArticleById,
   selectAllArticles,
   updateArticleById,
+  insertArticles,
 } = require("../models/articles.model");
 const { checkTopicExists } = require("../utils");
 
@@ -38,6 +39,17 @@ exports.patchArticleById = (req, res, next) => {
   updateArticleById(article_id, inc_votes)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postArticle = (req, res, next) => {
+  const article = req.body;
+  insertArticles(article)
+    .then((article) => {
+      res.status(201).send({ article });
     })
     .catch((err) => {
       next(err);

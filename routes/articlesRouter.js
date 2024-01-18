@@ -2,7 +2,10 @@ const articlesRouter = require("express").Router();
 const artControllers = require("../controllers/articles.controller");
 const commentsControllers = require("../controllers/comments.controller");
 
-articlesRouter.get("/articles", artControllers.getAllArticles);
+articlesRouter
+  .route("/articles")
+  .get(artControllers.getAllArticles)
+  .post(artControllers.postArticle);
 
 articlesRouter
   .route("/articles/:article_id")

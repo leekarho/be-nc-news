@@ -641,3 +641,92 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  test("POST 201 can add a new article", () => {
+    const newArticle = {
+      title: "Standing on the shoulders of giants",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "This test file is over 600 lines long!",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then((response) => {
+        const article = response.body.article;
+        expect(article.title).toBe("Standing on the shoulders of giants");
+        expect(article.topic).toBe("mitch");
+        expect(article.author).toBe("butter_bridge");
+        expect(article.body).toBe("This test file is over 600 lines long!");
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+        expect(article.hasOwnProperty("article_id")).toBe(true);
+        expect(article.hasOwnProperty("votes")).toBe(true);
+        expect(article.hasOwnProperty("created_at")).toBe(true);
+        expect(article.hasOwnProperty("comment_count")).toBe(true);
+      });
+  });
+  test("POST 201: trying to post a comment with more key-value pairs than expected", () => {
+    const newArticle = {
+      title: "Standing on the shoulders of giants",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "This test file is over 600 lines long!",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      lunch: "wrap",
+    };
+    return request(app).post("/api/articles").send(newArticle).expect(201);
+  });
+  test("POST 400: trying to post a comment with fewer key-value pairs than expected", () => {
+    const newArticle = {
+      title: "Standing on the shoulders of giants",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: trying to post a comment with unknown topic", () => {
+    const newArticle = {
+      title: "Standing on the shoulders of giants",
+      topic: "endpoints",
+      author: "butter_bridge",
+      body: "This test file is over 600 lines long!",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: trying to post a comment with unknown author", () => {
+    const newArticle = {
+      title: "Standing on the shoulders of giants",
+      topic: "endpoints",
+      author: "pie",
+      body: "This test file is over 600 lines long!",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
