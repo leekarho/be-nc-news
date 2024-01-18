@@ -15,19 +15,27 @@ Northcoders News is a RESTful API. It is a back-end service which provides infor
 
 - git clone
 
-  `git clone https://github.com/leekarho/be-nc-news.git`
+  ```
+  $ git clone https://github.com/leekarho/be-nc-news.git
+  ```
 
 - install dependencies
 
-  `npm install`
+  ```
+  $ npm install
+  ```
 
 - setup the database
 
-  `npm run setup-dbs`
+  ```
+  $ npm run setup-dbs
+  ```
 
 - seed the database
 
-  `npm run seed`
+  ```
+  $ npm run seed
+  ```
 
 **To set the database**
 

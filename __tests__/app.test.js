@@ -451,3 +451,77 @@ describe("GET /api/articles/:article_id (comment_count)", () => {
       });
   });
 });
+
+describe.only("GET /api/articles (sorting queries)", () => {
+  test("GET: 200 can sort by title, default descending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toBeSortedBy("title", {
+          descending: true,
+        });
+      });
+  });
+  test("GET: 200 can sort by topic, default descending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=topic")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toBeSortedBy("topic", {
+          descending: true,
+        });
+      });
+  });
+  test("GET: 200 can sort by author, default descending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toBeSortedBy("author", {
+          descending: true,
+        });
+      });
+  });
+  test("GET: 200 can sort by article_img_url, default descending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_img_url")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toBeSortedBy("article_img_url", {
+          descending: true,
+        });
+      });
+  });
+  test("GET: 400 error message when sorting by non-existent topic", () => {
+    return request(app)
+      .get("/api/articles?sort_by=pie")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("GET: 200 can order by create_at ascending", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toBeSortedBy("created_at", {
+          descending: false,
+        });
+      });
+  });
+  test("GET: 400 error message when given a non-existant order", () => {
+    return request(app)
+      .get("/api/articles?order=pie")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});

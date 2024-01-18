@@ -17,10 +17,10 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  const { topic } = req.query;
+  const { topic, sort_by, order } = req.query;
 
   const topicCheck = checkTopicExists(topic);
-  const selectQuery = selectAllArticles(topic);
+  const selectQuery = selectAllArticles(topic, sort_by, order);
 
   Promise.all([selectQuery, topicCheck])
     .then((response) => {
