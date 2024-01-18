@@ -77,3 +77,36 @@ exports.updateArticleById = (article_id, inc_votes) => {
       return data.rows[0];
     });
 };
+
+exports.insertArticles = (article) => {
+  const { title, topic, author, body, article_img_url } = article;
+  return db
+    .query(
+      `INSERT INTO articles (
+    author, title, body, topic, article_img_url 
+  )
+  VALUES ($1, $2, $3, $4, $5)
+  RETURNING *`,
+      [author, title, body, topic, article_img_url]
+    )
+    .then((data) => {
+      return data.rows[0];
+    })
+    .then((data) => {
+      const { article_id } = data;
+      return db
+        .query(
+          `SELECT articles.*, CAST(COUNT(comments.article_id) AS int) AS comment_count 
+      FROM articles
+      LEFT JOIN comments
+      ON articles.article_id = comments.article_id
+      WHERE articles.article_id = $1
+      GROUP BY articles.article_id`,
+          [article_id]
+        )
+        .then(({ rows }) => {
+          // console.log(rows, "<--rows");
+          return rows[0];
+        });
+    });
+};
