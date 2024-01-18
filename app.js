@@ -35,7 +35,7 @@ app.post("/api/articles/:article_id/comments", postCommentOnArticleId);
 app.delete("/api/comments/:comment_id", deleteCommentByCommentId);
 
 app.use((err, req, res, next) => {
-  if (err.msg === "Not found") {
+  if (err.msg && err.status) {
     res.status(err.status).send({ msg: err.msg });
   } else {
     next(err);

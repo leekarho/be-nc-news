@@ -19,7 +19,24 @@ exports.selectArticleById = (article_id) => {
     });
 };
 
-exports.selectAllArticles = (topic) => {
+exports.selectAllArticles = (topic, sort_by = "created_at", order = "desc") => {
+  const acceptedSortBy = [
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "article_img_url",
+  ];
+  const acceptedOrder = ["asc", "desc"];
+
+  if (!acceptedSortBy.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  if (!acceptedOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
   let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
   FROM articles
   LEFT JOIN comments 
@@ -33,12 +50,9 @@ exports.selectAllArticles = (topic) => {
   }
 
   queryStr += ` GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC`;
+  ORDER BY ${sort_by} ${order}`;
 
   return db.query(queryStr, queryArr).then((data) => {
-    // if (data.rows.length === 0) {
-    //   return Promise.reject({ status: 404, msg: "Not found" });
-    // }
     return data.rows;
   });
 };
