@@ -497,6 +497,17 @@ describe("GET /api/articles (sorting queries)", () => {
         });
       });
   });
+  test("GET: 200 can sort by author, in ascending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=asc")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toBeSortedBy("author", {
+          descending: false,
+        });
+      });
+  });
   test("GET: 400 error message when sorting by non-existent topic", () => {
     return request(app)
       .get("/api/articles?sort_by=pie")
@@ -522,6 +533,30 @@ describe("GET /api/articles (sorting queries)", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("GET /api/users/:username", () => {
+  test("GET 200 returns correct user object", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then((response) => {
+        const user = response.body.user;
+        expect(user.username).toBe("butter_bridge");
+        expect(user.name).toBe("jonny");
+        expect(user.avatar_url).toBe(
+          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        );
+      });
+  });
+  test("GET 404 error message if given a non-existent username", () => {
+    return request(app)
+      .get("/api/users/pie")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
       });
   });
 });
