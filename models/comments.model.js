@@ -34,3 +34,17 @@ exports.removeCommentByCommentId = (comment_id) => {
       return data.rows;
     });
 };
+
+exports.updateCommentByCommentId = (comment_id, vote) => {
+  return db
+    .query(
+      `UPDATE comments 
+  SET votes = votes + $2
+  WHERE comment_id = $1
+  RETURNING *`,
+      [comment_id, vote]
+    )
+    .then((data) => {
+      return data.rows[0];
+    });
+};

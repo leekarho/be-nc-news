@@ -560,3 +560,84 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("PATCH 200 can update votes", () => {
+    const updateVotes = { inc_votes: 3 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(updateVotes)
+      .expect(200)
+      .then((response) => {
+        const comment = response.body.comment;
+        expect(typeof comment.body).toBe("string");
+        expect(comment.votes).toBe(19);
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.article_id).toBe(9);
+        expect(typeof comment.created_at).toBe("string");
+      });
+  });
+  test("PATCH 200 can update votes with a negative vote", () => {
+    const updateVotes = { inc_votes: -3 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(updateVotes)
+      .expect(200)
+      .then((response) => {
+        const comment = response.body.comment;
+        expect(comment.votes).toBe(13);
+      });
+  });
+  test("PATCH 200 can update votes with a negative vote", () => {
+    const updateVotes = { inc_votes: -3 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(updateVotes)
+      .expect(200)
+      .then((response) => {
+        const comment = response.body.comment;
+        expect(comment.votes).toBe(13);
+      });
+  });
+  test("PATCH 200 can update comments with object containing more than just votes", () => {
+    const updateVotes = { inc_votes: -3, topic: "pie" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(updateVotes)
+      .expect(200)
+      .then((response) => {
+        const comment = response.body.comment;
+        expect(comment.votes).toBe(13);
+      });
+  });
+  test("PATCH 400 error message when object contains no inc_vote", () => {
+    const updateVotes = { topic: "pie" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(updateVotes)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 400 error message when object is given a string", () => {
+    const updateVotes = { inc_votes: "pie" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(updateVotes)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 404 error message when looking for a non-existent id", () => {
+    const updateVotes = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/comments/999")
+      .send(updateVotes)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      });
+  });
+});
