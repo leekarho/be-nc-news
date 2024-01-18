@@ -452,7 +452,7 @@ describe("GET /api/articles/:article_id (comment_count)", () => {
   });
 });
 
-describe.only("GET /api/articles (sorting queries)", () => {
+describe("GET /api/articles (sorting queries)", () => {
   test("GET: 200 can sort by title, default descending", () => {
     return request(app)
       .get("/api/articles?sort_by=title")
