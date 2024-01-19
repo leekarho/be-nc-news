@@ -980,6 +980,19 @@ describe("POST /api/topics", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
+  test("POST 400: trying to post an existing topic", () => {
+    const newPost = {
+      slug: "mitch",
+      description: "coding is more fun than skittles",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newPost)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
 });
 
 describe("DELETE /api/articles/:article_id", () => {

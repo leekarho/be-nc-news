@@ -8,13 +8,20 @@ exports.selectAllTopics = () => {
 
 exports.insertNewTopic = (description, slug) => {
   return db
-    .query(
-      `INSERT INTO topics (description, slug)
-  VALUES ($1, $2)
-  RETURNING *`,
-      [description, slug]
-    )
+    .query(`SELECT * FROM topics WHERE slug = $1`, [slug])
     .then((data) => {
-      return data.rows[0];
+      if (data.rows.length > 0)
+        return Promise.reject({ status: 400, msg: "Bad request" });
+
+      return db
+        .query(
+          `INSERT INTO topics (description, slug)
+            VALUES ($1, $2)
+            RETURNING *`,
+          [description, slug]
+        )
+        .then((data) => {
+          return data.rows[0];
+        });
     });
 };
