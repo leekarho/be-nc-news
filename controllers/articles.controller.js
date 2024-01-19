@@ -18,15 +18,16 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  const { topic, sort_by, order } = req.query;
+  const { topic, sort_by, order, limit, p } = req.query;
 
   const topicCheck = checkTopicExists(topic);
-  const selectQuery = selectAllArticles(topic, sort_by, order);
+  const selectQuery = selectAllArticles(topic, sort_by, order, limit, p);
 
   Promise.all([selectQuery, topicCheck])
     .then((response) => {
-      const articles = response[0];
-      res.status(200).send({ articles });
+      const articles = response[0][0];
+      const total_count = response[0][1];
+      res.status(200).send({ articles, total_count });
     })
     .catch((err) => {
       next(err);
@@ -46,8 +47,8 @@ exports.patchArticleById = (req, res, next) => {
 };
 
 exports.postArticle = (req, res, next) => {
-  const article = req.body;
-  insertArticles(article)
+  const { title, topic, author, body, article_img_url } = req.body;
+  insertArticles(title, topic, author, body, article_img_url)
     .then((article) => {
       res.status(201).send({ article });
     })
