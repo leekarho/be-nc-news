@@ -13,15 +13,11 @@ exports.getAllTopics = (req, res, next) => {
 exports.postNewTopic = (req, res, next) => {
   const { description, slug } = req.body;
 
-  // console.log(description, slug);
-
   insertNewTopic(description, slug)
     .then((topic) => {
-      console.log(topic);
       res.status(201).send({ topic });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
