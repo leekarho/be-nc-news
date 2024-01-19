@@ -5,3 +5,16 @@ exports.selectAllTopics = () => {
     return data.rows;
   });
 };
+
+exports.insertNewTopic = (description, slug) => {
+  return db
+    .query(
+      `INSERT INTO topics (description, slug)
+  VALUES ($1, $2)
+  RETURNING *`,
+      [description, slug]
+    )
+    .then((data) => {
+      return data.rows[0];
+    });
+};
