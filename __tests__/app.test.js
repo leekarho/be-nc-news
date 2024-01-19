@@ -862,6 +862,15 @@ describe("GET /api/articles (pagination)", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
+  test("GET 200: can filter by topic and gives correct total_count", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&p=2&limit=7")
+      .expect(200)
+      .then((response) => {
+        const total_count = response.body.total_count;
+        expect(total_count).toBe(5);
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments (pagination)", () => {
