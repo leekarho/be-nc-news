@@ -211,14 +211,14 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
   test("POST 400: trying to post a comment with fewer key-value pairs than expected", () => {
     const newComment = {
-      body: "i bloody love coding",
+      username: "butter_bridge",
     };
     return request(app)
       .post("/api/articles/3/comments")
       .send(newComment)
-      .expect(404)
+      .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("Not found");
+        expect(response.body.msg).toBe("Bad request");
       });
   });
   test("POST 404: trying to post a comment with a non-existent username", () => {
@@ -931,6 +931,49 @@ describe("GET /api/articles/:article_id/comments (pagination)", () => {
       .then((response) => {
         const comments = response.body.comments;
         expect(comments.length).toBe(3);
+      });
+  });
+});
+
+describe("POST /api/topics", () => {
+  test("GET 201: can add new topic", () => {
+    const newPost = {
+      slug: "nc_code",
+      description: "coding is more fun than skittles",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newPost)
+      .expect(201)
+      .then((response) => {
+        const topic = response.body.topic;
+        expect(topic).toEqual(newPost);
+      });
+  });
+  test("POST 201: trying to post a topic with more key-value pairs than expected", () => {
+    const newPost = {
+      slug: "nc_code",
+      description: "coding is more fun than skittles",
+      votes: 5,
+    };
+    return request(app).post("/api/topics").send(newPost).expect(201);
+  });
+  test("POST 201: trying to post a topic with no description key", () => {
+    const newPost = {
+      slug: "nc_code",
+    };
+    return request(app).post("/api/topics").send(newPost).expect(201);
+  });
+  test("POST 400: trying to post a topic with no slug key", () => {
+    const newPost = {
+      description: "coding is more fun than skittles",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newPost)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
       });
   });
 });
