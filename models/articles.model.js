@@ -164,8 +164,7 @@ exports.removeArticleById = (article_id) => {
     .then(() => {
       return db.query(
         `DELETE FROM articles 
-    WHERE article_id = $1
-    RETURNING *`,
+    WHERE article_id = $1`,
         [article_id]
       );
     });

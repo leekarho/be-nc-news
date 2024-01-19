@@ -1001,11 +1001,11 @@ describe("DELETE /api/articles/:article_id", () => {
   });
   test("DELETE 404 cannot delete a previously deleted comment", () => {
     return request(app)
-      .delete("/api/articles/1")
+      .delete("/api/articles/2")
       .expect(204)
       .then(() => {
         return request(app)
-          .delete("/api/articles/1")
+          .delete("/api/articles/2")
           .expect(404)
           .then((response) => {
             expect(response.body.msg).toBe("Not found");
