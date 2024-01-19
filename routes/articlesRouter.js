@@ -10,7 +10,8 @@ articlesRouter
 articlesRouter
   .route("/:article_id")
   .get(artControllers.getArticleById)
-  .patch(artControllers.patchArticleById);
+  .patch(artControllers.patchArticleById)
+  .delete(artControllers.deleteArticleById);
 
 articlesRouter
   .route("/:article_id/comments")

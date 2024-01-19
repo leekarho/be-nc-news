@@ -981,3 +981,38 @@ describe("POST /api/topics", () => {
       });
   });
 });
+
+describe("DELETE /api/articles/:article_id", () => {
+  test("DELETE 204, can delete an article", () => {
+    return request(app).delete("/api/articles/1").expect(204);
+  });
+  test("DELETE 404 cannot delete a previously deleted comment", () => {
+    return request(app)
+      .delete("/api/articles/1")
+      .expect(204)
+      .then(() => {
+        return request(app)
+          .delete("/api/articles/1")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("Not found");
+          });
+      });
+  });
+  test("DELETE 404 trying to delete a non-existent id", () => {
+    return request(app)
+      .delete("/api/articles/999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      });
+  });
+  test("DELETE 400 when id is a string rather than an integer", () => {
+    return request(app)
+      .delete("/api/articles/sandwich")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});

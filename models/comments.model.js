@@ -31,17 +31,6 @@ exports.selectCommentsByArticleId = (article_id, limit = 10, p = 1) => {
           return data.rows;
         });
     });
-
-  // return db
-  //   .query(
-  //     `SELECT * FROM comments WHERE article_id = $1
-  //     ORDER BY created_at DESC
-  //     LIMIT ${limit} OFFSET (${limit} * ${p})-${limit} `,
-  //     [article_id]
-  //   )
-  //   .then((data) => {
-  //     return data.rows;
-  //   });
 };
 
 exports.insertCommentOnArticleId = (article_id, body, username) => {
