@@ -96,6 +96,11 @@
       ]
     }
   },
+  "DELETE /api/articles/id": {
+    "description": "deletes article and associated comments",
+    "queries": [],
+    "exampleResponse": {}
+  },
   "GET /api/articles/id/comments": {
     "description": "serves an array of all articles",
     "queries": ["limit", "p"],
@@ -155,7 +160,7 @@
       }
     }
   },
-  "DELETE /api/comments/:comment_id": {
+  "DELETE /api/comments/comment_id": {
     "description": "deletes comment",
     "queries": [],
     "exampleResponse": {}
