@@ -1,14 +1,47 @@
 const db = require("../db/connection");
 
-exports.selectCommentsByArticleId = (id) => {
+exports.selectCommentsByArticleId = (article_id, limit = 10, p = 1) => {
+  if (isNaN(limit)) return Promise.reject({ status: 400, msg: "Bad request" });
+
+  if (isNaN(p)) return Promise.reject({ status: 400, msg: "Bad request" });
+
   return db
     .query(
-      "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC",
-      [id]
+      `SELECT COUNT(*) FROM comments
+  WHERE article_id = $1`,
+      [article_id]
     )
     .then((data) => {
-      return data.rows;
+      return data.rows[0].count;
+    })
+    .then((numRecords) => {
+      const maxP = Math.ceil(numRecords / limit);
+      if (p > maxP && maxP !== 0) {
+        p = maxP;
+      }
+      return db
+        .query(
+          `SELECT * FROM comments WHERE article_id = $1 
+        ORDER BY created_at DESC
+        LIMIT ${limit} OFFSET (${limit} * ${p})-${limit} `,
+          [article_id]
+        )
+        .then((data) => {
+          // console.log(data.rows);
+          return data.rows;
+        });
     });
+
+  // return db
+  //   .query(
+  //     `SELECT * FROM comments WHERE article_id = $1
+  //     ORDER BY created_at DESC
+  //     LIMIT ${limit} OFFSET (${limit} * ${p})-${limit} `,
+  //     [article_id]
+  //   )
+  //   .then((data) => {
+  //     return data.rows;
+  //   });
 };
 
 exports.insertCommentOnArticleId = (article_id, body, username) => {

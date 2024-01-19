@@ -863,3 +863,65 @@ describe("GET /api/articles (pagination)", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id/comments (pagination)", () => {
+  test("GET 200: can limit the number of comments shown in a page", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=8")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body.comments;
+        expect(comments.length).toBe(8);
+        comments.forEach((comment) => {
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.article_id).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+        });
+      });
+  });
+  test("GET 200: limit number defaults to 10", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body.comments;
+        expect(comments.length).toBe(10);
+      });
+  });
+  test("GET 400: error message if string is given for limit query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=pie")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("GET 200: accepts p query which specifies which page to start at", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=4&p=3")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body.comments;
+        expect(comments.length).toBe(3);
+      });
+  });
+  test("GET 400: error message if string is given for p query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=pie")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("GET 200: when given a high p number, page defaults to last page", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=4&p=9")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body.comments;
+        expect(comments.length).toBe(3);
+      });
+  });
+});
