@@ -1,6 +1,6 @@
 # Northcoders News API
 
-Northcoders News is a RESTful API. It is a back-end service which provides information to front-end architecture.
+Northcoders News is a RESTful API, with a number of endpoints which cover CRUD operations. The endpoints include `users`, `topics`, `articles`, and `comments`. It is a back-end service which provides information to front-end architecture. This api is hosted here:
 
 `https://nc-news-u31g.onrender.com/api`
 
@@ -25,19 +25,24 @@ Northcoders News is a RESTful API. It is a back-end service which provides infor
   $ npm install
   ```
 
-- setup the database
+- to setup the database
 
   ```
   $ npm run setup-dbs
   ```
 
-- seed the database
+- to seed the database
 
   ```
   $ npm run seed
   ```
 
-**To set the database**
+- to run tests
+  ```
+  $ npm test
+  ```
+
+**To connect to the databases locally**
 
 - create .env.test file and insert:
 
