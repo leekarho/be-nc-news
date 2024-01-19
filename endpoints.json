@@ -79,21 +79,19 @@
     }
   },
   "GET /api/articles/id": {
-    "description": "serves an array of all articles",
+    "description": "serves an object with article",
     "queries": [],
     "exampleResponse": {
-      "articles": [
-        {
-          "title": "Living in the shadow of a great man",
-          "topic": "mitch",
-          "author": "butter_bridge",
-          "body": "I find this existence challenging",
-          "created_at": 1594329060000,
-          "votes": 100,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          "comment_count": 11
-        }
-      ]
+      "articles": {
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "created_at": 1594329060000,
+        "votes": 100,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": 11
+      }
     }
   },
   "DELETE /api/articles/id": {
@@ -102,7 +100,7 @@
     "exampleResponse": {}
   },
   "GET /api/articles/id/comments": {
-    "description": "serves an array of all articles",
+    "description": "serves an array of all comments from the specified article",
     "queries": ["limit", "p"],
     "exampleResponse": {
       "articles": [
@@ -132,7 +130,7 @@
     }
   },
   "PATCH /api/articles/id": {
-    "description": "serves an object of posted comment",
+    "description": "serves an object of patched article",
     "queries": [],
     "exampleResponse": {
       "article": {
@@ -148,7 +146,7 @@
     }
   },
   "PATCH /api/comments/comment_id": {
-    "description": "serves an object with patched votes",
+    "description": "serves an object with patched comment",
     "queries": [],
     "exampleResponse": {
       "comment": {
