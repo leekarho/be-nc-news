@@ -58,7 +58,7 @@ exports.selectAllArticles = (
     })
     .then((numRecords) => {
       const maxP = Math.ceil(numRecords / limit);
-      if (p > maxP) {
+      if (p > maxP && maxP !== 0) {
         p = maxP;
       }
 
