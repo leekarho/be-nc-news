@@ -758,7 +758,7 @@ describe("GET /api/articles (pagination)", () => {
         const articles = response.body.articles;
         const total_count = response.body.total_count;
         expect(articles.length).toBe(8);
-        expect(total_count).toBe(8);
+        expect(total_count).toBe(13);
       });
   });
   test("GET 200: limit of articles on a page defaults to 10", () => {
@@ -769,7 +769,7 @@ describe("GET /api/articles (pagination)", () => {
         const articles = response.body.articles;
         const total_count = response.body.total_count;
         expect(articles.length).toBe(10);
-        expect(total_count).toBe(10);
+        expect(total_count).toBe(13);
       });
   });
   test("GET 200: where limit is higher than the number if articles, defaults to 10", () => {
@@ -780,7 +780,7 @@ describe("GET /api/articles (pagination)", () => {
         const articles = response.body.articles;
         const total_count = response.body.total_count;
         expect(articles.length).toBe(10);
-        expect(total_count).toBe(10);
+        expect(total_count).toBe(13);
       });
   });
   test("GET 400: error message when given a non-valid limit", () => {
@@ -809,7 +809,7 @@ describe("GET /api/articles (pagination)", () => {
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           comment_count: "0",
         });
-        expect(total_count).toBe(3);
+        expect(total_count).toBe(13);
       });
   });
   test("GET 200: page starts at given p query and limit", () => {
@@ -830,7 +830,8 @@ describe("GET /api/articles (pagination)", () => {
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           comment_count: "0",
         });
-        expect(total_count).toBe(5);
+        expect(articles.length).toBe(5);
+        expect(total_count).toBe(13);
       });
   });
   test("GET 200: when given a high p number, page defaults to last page", () => {
@@ -851,7 +852,8 @@ describe("GET /api/articles (pagination)", () => {
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           comment_count: "0",
         });
-        expect(total_count).toBe(3);
+        expect(articles.length).toBe(3);
+        expect(total_count).toBe(13);
       });
   });
   test("GET 400: error message when invalid p number given", () => {
@@ -867,8 +869,10 @@ describe("GET /api/articles (pagination)", () => {
       .get("/api/articles?topic=mitch&p=2&limit=7")
       .expect(200)
       .then((response) => {
+        const articles = response.body.articles;
         const total_count = response.body.total_count;
-        expect(total_count).toBe(5);
+        expect(articles.length).toBe(5);
+        expect(total_count).toBe(12);
       });
   });
 });

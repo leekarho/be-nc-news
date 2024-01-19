@@ -51,8 +51,19 @@ exports.selectAllArticles = (
     limit = 10;
   }
 
+  const firstQueryArr = [];
+
+  let firstQueryStr = "SELECT CAST(COUNT(*) AS INT) FROM articles";
+
+  const queryArr = [];
+
+  if (topic) {
+    firstQueryStr += " WHERE topic = $1";
+    firstQueryArr.push(topic);
+  }
+
   return db
-    .query("SELECT COUNT(*) FROM articles")
+    .query(firstQueryStr, firstQueryArr)
     .then((data) => {
       return data.rows[0].count;
     })
@@ -79,7 +90,7 @@ exports.selectAllArticles = (
       LIMIT ${limit} OFFSET (${limit} * ${p})-${limit}`;
 
       return db.query(queryStr, queryArr).then((data) => {
-        const total_count = data.rows.length;
+        const total_count = numRecords;
         return [data.rows, total_count];
       });
     });
