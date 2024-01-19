@@ -100,7 +100,7 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then((response) => {
         const articles = response.body.articles;
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBeGreaterThan(0);
 
         articles.forEach((article) => {
           expect(typeof article.article_id).toBe("number");
@@ -683,6 +683,24 @@ describe("POST /api/articles", () => {
     };
     return request(app).post("/api/articles").send(newArticle).expect(201);
   });
+  test("POST 201: article_img_url uses default if not provided", () => {
+    const newArticle = {
+      title: "Standing on the shoulders of giants",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "This test file is over 600 lines long!",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then((response) => {
+        const article = response.body.article;
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+        );
+      });
+  });
   test("POST 400: trying to post a comment with fewer key-value pairs than expected", () => {
     const newArticle = {
       title: "Standing on the shoulders of giants",
@@ -724,6 +742,121 @@ describe("POST /api/articles", () => {
     return request(app)
       .post("/api/articles")
       .send(newArticle)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("GET /api/articles (pagination)", () => {
+  test("GET 200: can limit the number of articles shown in a page", () => {
+    return request(app)
+      .get("/api/articles?limit=8")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        const total_count = response.body.total_count;
+        expect(articles.length).toBe(8);
+        expect(total_count).toBe(8);
+      });
+  });
+  test("GET 200: limit of articles on a page defaults to 10", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        const total_count = response.body.total_count;
+        expect(articles.length).toBe(10);
+        expect(total_count).toBe(10);
+      });
+  });
+  test("GET 200: where limit is higher than the number if articles, defaults to 10", () => {
+    return request(app)
+      .get("/api/articles?limit=99")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        const total_count = response.body.total_count;
+        expect(articles.length).toBe(10);
+        expect(total_count).toBe(10);
+      });
+  });
+  test("GET 400: error message when given a non-valid limit", () => {
+    return request(app)
+      .get("/api/articles?limit=pie")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("GET 200: page starts at given p query", () => {
+    return request(app)
+      .get("/api/articles?p=2")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        const total_count = response.body.total_count;
+        expect(articles[0]).toEqual({
+          author: "icellusedkars",
+          title: "Does Mitch predate civilisation?",
+          article_id: 8,
+          topic: "mitch",
+          created_at: "2020-04-17T01:08:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: "0",
+        });
+        expect(total_count).toBe(3);
+      });
+  });
+  test("GET 200: page starts at given p query and limit", () => {
+    return request(app)
+      .get("/api/articles?p=2&limit=8")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        const total_count = response.body.total_count;
+        expect(articles[0]).toEqual({
+          author: "rogersop",
+          title: "Seven inspirational thought leaders from Manchester UK",
+          article_id: 10,
+          topic: "mitch",
+          created_at: "2020-05-14T04:15:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: "0",
+        });
+        expect(total_count).toBe(5);
+      });
+  });
+  test("GET 200: when given a high p number, page defaults to last page", () => {
+    return request(app)
+      .get("/api/articles?p=9")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        const total_count = response.body.total_count;
+        expect(articles[0]).toEqual({
+          author: "icellusedkars",
+          title: "Does Mitch predate civilisation?",
+          article_id: 8,
+          topic: "mitch",
+          created_at: "2020-04-17T01:08:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: "0",
+        });
+        expect(total_count).toBe(3);
+      });
+  });
+  test("GET 400: error message when invalid p number given", () => {
+    return request(app)
+      .get("/api/articles?p=pie")
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");

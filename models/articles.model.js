@@ -19,7 +19,13 @@ exports.selectArticleById = (article_id) => {
     });
 };
 
-exports.selectAllArticles = (topic, sort_by = "created_at", order = "desc") => {
+exports.selectAllArticles = (
+  topic,
+  sort_by = "created_at",
+  order = "desc",
+  limit = 10,
+  p = 1
+) => {
   const acceptedSortBy = [
     "title",
     "topic",
@@ -37,24 +43,50 @@ exports.selectAllArticles = (topic, sort_by = "created_at", order = "desc") => {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
-  let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
-  FROM articles
-  LEFT JOIN comments 
-  ON comments.article_id = articles.article_id`;
-
-  const queryArr = [];
-
-  if (topic) {
-    queryStr += " WHERE topic = $1";
-    queryArr.push(topic);
+  if (isNaN(limit)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
-  queryStr += ` GROUP BY articles.article_id
-  ORDER BY ${sort_by} ${order}`;
+  if (isNaN(p)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
 
-  return db.query(queryStr, queryArr).then((data) => {
-    return data.rows;
-  });
+  if (limit > 10) {
+    limit = 10;
+  }
+
+  return db
+    .query("SELECT COUNT(*) FROM articles")
+    .then((data) => {
+      return data.rows[0].count;
+    })
+    .then((numRecords) => {
+      const maxP = Math.ceil(numRecords / limit);
+      if (p > maxP) {
+        p = maxP;
+      }
+
+      let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
+      FROM articles
+      LEFT JOIN comments 
+      ON comments.article_id = articles.article_id`;
+
+      const queryArr = [];
+
+      if (topic) {
+        queryStr += " WHERE topic = $1";
+        queryArr.push(topic);
+      }
+
+      queryStr += ` GROUP BY articles.article_id
+      ORDER BY ${sort_by} ${order}
+      LIMIT ${limit} OFFSET (${limit} * ${p})-${limit}`;
+
+      return db.query(queryStr, queryArr).then((data) => {
+        const total_count = data.rows.length;
+        return [data.rows, total_count];
+      });
+    });
 };
 
 exports.updateArticleById = (article_id, inc_votes) => {
@@ -78,8 +110,13 @@ exports.updateArticleById = (article_id, inc_votes) => {
     });
 };
 
-exports.insertArticles = (article) => {
-  const { title, topic, author, body, article_img_url } = article;
+exports.insertArticles = (
+  title,
+  topic,
+  author,
+  body,
+  article_img_url = "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+) => {
   return db
     .query(
       `INSERT INTO articles (
@@ -105,7 +142,6 @@ exports.insertArticles = (article) => {
           [article_id]
         )
         .then(({ rows }) => {
-          // console.log(rows, "<--rows");
           return rows[0];
         });
     });
