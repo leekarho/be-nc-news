@@ -9,6 +9,16 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics": {
+    "description": "serves an object of posted topic",
+    "queries": [],
+    "exampleResponse": {
+      "topic": {
+        "slug": "nc_coding",
+        "description": "coding is more addictive than skittles!"
+      }
+    }
+  },
   "GET /api/users": {
     "description": "serves an array of all users",
     "queries": [],
@@ -47,7 +57,8 @@
           "comment_count": 6,
           "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
-      ]
+      ],
+      "total_count": 5
     }
   },
   "POST /api/articles": {
