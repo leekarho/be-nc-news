@@ -12,9 +12,10 @@ const {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
+  const { limit, p } = req.query;
 
   const articleCheck = checkArticleExists(article_id);
-  const selectQuery = selectCommentsByArticleId(article_id);
+  const selectQuery = selectCommentsByArticleId(article_id, limit, p);
 
   Promise.all([selectQuery, articleCheck])
     .then((response) => {

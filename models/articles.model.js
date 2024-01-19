@@ -43,13 +43,9 @@ exports.selectAllArticles = (
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
-  if (isNaN(limit)) {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
+  if (isNaN(limit)) return Promise.reject({ status: 400, msg: "Bad request" });
 
-  if (isNaN(p)) {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
+  if (isNaN(p)) return Promise.reject({ status: 400, msg: "Bad request" });
 
   if (limit > 10) {
     limit = 10;
