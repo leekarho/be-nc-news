@@ -3,8 +3,9 @@ const {
   selectAllArticles,
   updateArticleById,
   insertArticles,
+  removeArticleById,
 } = require("../models/articles.model");
-const { checkTopicExists } = require("../utils");
+const { checkTopicExists, checkArticleExists } = require("../utils");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -51,6 +52,21 @@ exports.postArticle = (req, res, next) => {
   insertArticles(title, topic, author, body, article_img_url)
     .then((article) => {
       res.status(201).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+
+  const articleCheck = checkArticleExists(article_id);
+  const selectQuery = removeArticleById(article_id);
+
+  Promise.all([articleCheck, selectQuery])
+    .then(() => {
+      res.status(204).send();
     })
     .catch((err) => {
       next(err);
