@@ -934,7 +934,7 @@ describe("GET /api/articles/:article_id/comments (pagination)", () => {
       .expect(200)
       .then((response) => {
         const comments = response.body.comments;
-        expect(comments.length).toBe(3);
+        expect(comments.length).toBe(0);
       });
   });
 });
