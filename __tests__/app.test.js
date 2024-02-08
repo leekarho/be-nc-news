@@ -508,6 +508,17 @@ describe("GET /api/articles (sorting queries)", () => {
         });
       });
   });
+  test("GET: 200 can sort by votes, in ascending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=asc")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.articles;
+        expect(articles).toBeSortedBy("votes", {
+          descending: false,
+        });
+      });
+  });
   test("GET: 400 error message when sorting by non-existent topic", () => {
     return request(app)
       .get("/api/articles?sort_by=pie")

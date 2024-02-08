@@ -15,33 +15,6 @@ exports.selectCommentsByArticleId = (article_id, limit = 10, p = 1) => {
     .then((data) => {
       return data.rows;
     });
-
-  // return db
-  //   .query(
-  //     `SELECT COUNT(*) FROM comments
-  // WHERE article_id = $1`,
-  //     [article_id]
-  //   )
-  //   .then((data) => {
-  //     return data.rows[0].count;
-  //   })
-  //   .then((numRecords) => {
-  //     const maxP = Math.ceil(numRecords / limit);
-  //     let currentPage = p
-  //     if (currentPage > maxP && maxP !== 0) {
-  //       currentPage = maxP;
-  //     }
-  //     return db
-  //       .query(
-  //         `SELECT * FROM comments WHERE article_id = $1
-  //       ORDER BY created_at DESC
-  //       LIMIT ${limit} OFFSET (${limit} * ${currentPage})-${limit} `,
-  //         [article_id]
-  //       )
-  //       .then((data) => {
-  //         return data.rows;
-  //       });
-  //   });
 };
 
 exports.insertCommentOnArticleId = (article_id, body, username) => {

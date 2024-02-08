@@ -32,6 +32,8 @@ exports.selectAllArticles = (
     "author",
     "created_at",
     "article_img_url",
+    "votes",
+    "comment_count",
   ];
   const acceptedOrder = ["asc", "desc"];
 
