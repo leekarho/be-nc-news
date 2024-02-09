@@ -2,11 +2,11 @@
 
 Northcoders News is a RESTful API, with a number of endpoints which cover CRUD operations. The endpoints include `users`, `topics`, `articles`, and `comments`. It is a back-end service which provides information to front-end architecture. This api is hosted here:
 
-`https://nc-news-u31g.onrender.com/api`
+https://nc-news-u31g.onrender.com/api
 
 **Tech stack**:
 
-- node.js
+- node.js v20.5.0
 - express
 - PostgreSQL database
 - jest and supertest for testing
