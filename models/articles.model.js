@@ -70,11 +70,6 @@ exports.selectAllArticles = (
       return data.rows[0].count;
     })
     .then((numRecords) => {
-      const maxP = Math.ceil(numRecords / limit);
-      if (p > maxP && maxP !== 0) {
-        p = maxP;
-      }
-
       let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
       FROM articles
       LEFT JOIN comments 

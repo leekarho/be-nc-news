@@ -845,26 +845,13 @@ describe("GET /api/articles (pagination)", () => {
         expect(total_count).toBe(13);
       });
   });
-  test("GET 200: when given a high p number, page defaults to last page", () => {
+  test("GET 200: when given a high p number, returns an empty array", () => {
     return request(app)
       .get("/api/articles?p=9")
       .expect(200)
       .then((response) => {
         const articles = response.body.articles;
-        const total_count = response.body.total_count;
-        expect(articles[0]).toEqual({
-          author: "icellusedkars",
-          title: "Does Mitch predate civilisation?",
-          article_id: 8,
-          topic: "mitch",
-          created_at: "2020-04-17T01:08:00.000Z",
-          votes: 0,
-          article_img_url:
-            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          comment_count: "0",
-        });
-        expect(articles.length).toBe(3);
-        expect(total_count).toBe(13);
+        expect(articles).toEqual([]);
       });
   });
   test("GET 400: error message when invalid p number given", () => {
