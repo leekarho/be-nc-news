@@ -11,12 +11,20 @@ https://nc-news-u31g.onrender.com/api
 - PostgreSQL database
 - jest and supertest for testing
 
+**Requirements**
+
+node v20.5.0
+
 **Getting started:**
 
 - git clone
 
   ```
   $ git clone https://github.com/leekarho/be-nc-news.git
+  ```
+
+  ```
+  $ cd be-nc-news
   ```
 
 - install dependencies
